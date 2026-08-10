@@ -45,19 +45,8 @@ Linear programming, simulation, and decision modeling.
 
 - [Shelby Shelving LP Model](./optimization-prescriptive-analytics/shelby-shelving-lp-model) — linear programming model for optimal product mix
 - [Monte Carlo Simulations](./optimization-prescriptive-analytics/monte-carlo-simulations) — risk and forecasting simulations in Excel
-- [Hospital Cost Optimization](./optimization-prescriptive-analytics/hospital-cost-optimization) — cost minimization model
-
-## Logistics & Supply Chain
-
-Projects connecting my Air Force logistics background to data driven decision making.
-
-- [Delivery Cost Analysis](./logistics-supply-chain/delivery-cost-analysis) — cost modeling for delivery operations
-Just paste this straight into your README.md file — GitHub will render the Markdown formatting automatically (headers, bullets, bold, links) once it's in the repo.
+- [Hospital Cost Optimization](./optimization-prescriptive-analytics/hospital-cost-optimization) — cost minimization model.
 
 
 
 
-
-
-
-Claude is AI and can make mistakes. Please double-check responses.
