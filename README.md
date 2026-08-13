@@ -1,5 +1,5 @@
 
-# Mark Ruperto — Data Science & AI Portfolio
+# Mark Ruperto — Technical Skills Portfolio
 
 Air Force veteran with a BS in Applied Business Analytics, including coursework in data science and machine learning. Currently working towards a role in AI engineering.
 
