@@ -20,7 +20,7 @@ Exploratory analysis, classification, and clustering projects using Python and R
 - [Naive Bayes Classification](https://github.com/mrklrnz/portfolio/tree/main/data-science/naive-bayes-classification) — probabilistic classification model
 - [Employee Satisfaction EDA](https://github.com/mrklrnz/portfolio/tree/main/data-science/employee-satisfaction-eda) — exploratory data analysis
 - [Delivery Cost Analysis](https://github.com/mrklrnz/portfolio/tree/main/data-science/delivery-cost-analysis) — logistics cost modeling
-- [Association Rules in R](data-science/Association Rules Analysis.Rmd) — market basket analysis
+- [Association Rules in R](https://github.com/mrklrnz/portfolio/blob/main/data-science/Association%20Rules%20Analysis.Rmd)) — market basket analysis
 
 ## Machine Learning
 Supervised learning and model evaluation projects.
