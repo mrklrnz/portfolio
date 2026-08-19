@@ -15,7 +15,7 @@ Air Force veteran with a BS in Applied Business Analytics, including coursework 
 
 ## Data Science
 Exploratory analysis, classification, and clustering projects using Python and R.
-- [Customer Churn Pipeline](https://github.com/mrklrnz/portfolio/tree/main/data-science/customer_churn) — end to end churn prediction workflow
+- [Customer Churn Pipeline](data-science/customer_churn.ipynb) — end to end churn prediction workflow
 - [K-Means Clustering](https://github.com/mrklrnz/portfolio/tree/main/data-science/kmeans-clustering) — unsupervised segmentation project
 - [Naive Bayes Classification](https://github.com/mrklrnz/portfolio/tree/main/data-science/naive-bayes-classification) — probabilistic classification model
 - [Employee Satisfaction EDA](https://github.com/mrklrnz/portfolio/tree/main/data-science/employee-satisfaction-eda) — exploratory data analysis
