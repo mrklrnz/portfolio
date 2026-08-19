@@ -16,11 +16,10 @@ Air Force veteran with a BS in Applied Business Analytics, including coursework 
 ## Data Science
 Exploratory analysis, classification, and clustering projects using Python and R.
 - [Customer Churn Pipeline](data-science/customer_churn.ipynb) — end to end churn prediction workflow
-- [K-Means Clustering](https://github.com/mrklrnz/portfolio/tree/main/data-science/kmeans-clustering) — unsupervised segmentation project
-- [Naive Bayes Classification](https://github.com/mrklrnz/portfolio/tree/main/data-science/naive-bayes-classification) — probabilistic classification model
-- [Employee Satisfaction EDA](https://github.com/mrklrnz/portfolio/tree/main/data-science/employee-satisfaction-eda) — exploratory data analysis
-- [Delivery Cost Analysis](https://github.com/mrklrnz/portfolio/tree/main/data-science/delivery-cost-analysis) — logistics cost modeling
-- [Association Rules in R](https://github.com/mrklrnz/portfolio/blob/main/data-science/Association%20Rules%20Analysis.Rmd)) — market basket analysis
+- [Naive Bayes Classification](https://github.com/mrklrnz/portfolio/blob/main/data-science/Naive%20Bayes%20Classification.ipynb) — probabilistic classification model
+- [Employee Satisfaction EDA](https://github.com/mrklrnz/portfolio/blob/main/data-science/employee_satisfaction.ipynb) — exploratory data analysis
+- [Overhead Cost Plot](https://github.com/mrklrnz/portfolio/blob/main/data-science/overhead_cost_plot.ipynb) — logistics cost modeling
+- [Association Rules in R](https://github.com/mrklrnz/portfolio/blob/main/data-science/Association%20Rules%20Analysis.Rmd) — market basket analysis
 
 ## Machine Learning
 Supervised learning and model evaluation projects.
