@@ -1,0 +1,131 @@
+---
+title: "Model Evaluation of a k-NN Classification Model"
+author: "Mark Ruperto"
+date: "2026-03-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r Loading packages, echo=TRUE}
+library(readxl)
+```
+
+```{r Setup working directory, echo=TRUE}
+setwd("/Users/markruperto/Desktop/School/GCU/BIT-446/Topic 5 - Model Evalutaion")
+```
+
+```{r Importing FailureRate1, echo=TRUE}
+FailureRate <- read_excel("FailureRate1.xlsx")
+FailureRate <- FailureRate[1:300, ]
+head(FailureRate)
+```
+```{r Model features, echo=TRUE}
+#Select features
+features <- FailureRate[, c("hours_run", "avg_hours_between_maint")]
+
+#Normalize
+features_scaled <- scale(features)
+
+#Convert to dataframe
+features_scaled <- as.data.frame(features_scaled)
+
+head(features_scaled)
+```
+
+```{r Creating training and test partitions, echo=TRUE}
+library(caTools)
+
+set.seed(44)
+
+sample <- sample.split(FailureRate$failure, SplitRatio = 0.7)
+
+train_failure <- subset(FailureRate, sample == TRUE)
+test_failure  <- subset(FailureRate, sample == FALSE)
+
+train_failure$failure <- as.factor(train_failure$failure)
+test_failure$failure  <- as.factor(test_failure$failure)
+
+nrow(train_failure)
+nrow(test_failure)
+```
+```{r KNN Model, echo=TRUE}
+library(class)
+
+#Using normalized features for KNN
+train_x <- features_scaled[sample == TRUE, ]
+test_x  <- features_scaled[sample == FALSE, ]
+
+#Target variable
+train_y <- train_failure$failure
+
+#Run KNN (k = 5)
+failureKNN <- knn(train = train_x, test = test_x, cl = train_y, k = 5)
+
+#View predictions
+head(failureKNN)
+```
+
+```{r Bind Predictions, echo=TRUE}
+
+#Bind failureKNN to test_failure
+test_ObsPred <- data.frame(test_failure, failureKNN)
+
+head(test_ObsPred)
+```
+
+```{r Model Results, echo=TRUE}
+library(ggplot2)
+library(lattice)
+library(caret)
+
+#Confusion matrix and model performance
+confusionMatrix(data = test_ObsPred$failureKNN,
+                reference = test_ObsPred$failure,
+                mode = "prec_recall")
+```
+
+```{r Comprehensive Metrics Summary, echo=TRUE}
+library(metrica)
+
+obs <- as.numeric(paste(test_failure$failure))
+pred <- as.numeric(paste(test_ObsPred$failureKNN))
+
+metrics_data <- data.frame(obs = obs, pred = pred)
+
+metrics_summary(
+  data = metrics_data,
+  obs = obs,
+  pred = pred,
+  type = "classification",
+  pos_level = 1
+)
+```
+
+Overall, the KNN model performed very well in predicting failure. The accuracy is high at 93.33%, which means most predictions were correct. The model also has strong precision and recall, showing that it does a good job identifying actual failures and doesn’t miss many of them. The F1 score supports this by showing a good balance between these two measures.
+
+One weakness is the lower specificity, which means the model sometimes incorrectly predicts failure when there isn’t one (false positives). However, the balanced accuracy and kappa value still show the model is reliable overall.
+
+Based on these results and the confusion matrix, this model would be useful for predicting failure, especially when it is important not to miss true failure cases.
