@@ -1,1 +1,91 @@
+import os
+import pandas as pd
+import numpy as np
+from outliers import smirnov_grubbs as grubbs
+from skimpy import skim
 
+# Set working directory (update path as needed)
+os.chdir("./data")
+
+# Load raw data into a DataFrame and add a zero-indexed record ID
+churn = pd.read_excel("Churn-1.xlsx")
+churn["record"] = range(len(churn))
+
+# Initial inspection
+print(churn.head())
+print(churn.info())
+print(churn.describe())
+
+# Standardize column names to lowercase
+print("Before:")
+print(churn.columns.tolist())
+
+churn.columns = churn.columns.str.lower()
+
+print("\nAfter:")
+print(churn.columns.tolist())
+
+# Strip special characters and spaces from column names
+print("Before:")
+print(churn.head())
+
+churn.columns = churn.columns.str.replace(r"[^a-zA-Z0-9]", "", regex=True)
+
+print("\nAfter:")
+print(churn.columns.tolist())
+
+# Remove duplicate rows
+duplicate_count = churn.duplicated().sum()
+churn = churn.drop_duplicates()
+print("Number of duplicate rows removed:", duplicate_count)
+
+# Count missing values per column
+missing_values = churn.isna().sum()
+print("Missing values per column:")
+print(missing_values)
+
+total_missing = missing_values.sum()
+print("\nTotal missing values:", total_missing)
+
+# Impute missing values in numeric columns with the column median
+numeric_cols = churn.select_dtypes(include=["number"]).columns
+print("Numeric columns:", numeric_cols.tolist())
+
+for col in numeric_cols:
+    median_value = churn[col].median()
+    churn[col] = churn[col].fillna(median_value)
+
+missing_values_after = churn.isna().sum()
+print("\nMissing values per column after imputation:")
+print(missing_values_after)
+
+total_missing_after = missing_values_after.sum()
+print("\nTotal missing values after imputation:", total_missing_after)
+
+# Detect the extreme outlier in vmailmessage using Grubbs' test
+s = churn["vmailmessage"].dropna()
+
+grubbs.max_test(s.values)  # confirms statistical significance
+
+pos = np.argmax(s.values)
+record_number = s.index[pos]
+outlier_value = s.iloc[pos]
+
+print("\nOutlier value:", outlier_value)
+print("Record number:", record_number)
+
+# Recode churn field to remove trailing periods
+print("Before:")
+print(churn.churn.head())
+
+# regex=False so "." is treated literally, not as a wildcard
+churn["churn"] = churn["churn"].str.replace(".", "", regex=False)
+
+print("After:")
+print(churn.churn.head())
+
+# Summarize the cleaned DataFrame
+skim(churn)
+
+# Export cleaned data to Excel
+churn.to_excel("ChurnREADY.xlsx", index=False)
