@@ -1,0 +1,164 @@
+---
+title: "Logistics Regression"
+author: "Mark Ruperto"
+date: "2026-04-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Step 1: Load packages
+```{r Loading packages, echo=TRUE}
+library(readxl)
+library(ggplot2)
+library(lattice)
+library(caTools)
+library(fmsb)
+library(caret)
+library(metrica)
+```
+
+##Step 2: Setup working directory
+```{r Working directory, echo=TRUE}
+setwd("/Users/markruperto/Desktop/School/GCU/BIT-446/Topic 6 - Logistics Regression")
+getwd()
+```
+
+##Step 3: Import TrainTestData
+```{r Import Lattes1, echo=TRUE}
+Lattes <- read_excel("Lattes1.xlsx", sheet = "TrainTestData")
+head(Lattes)
+```
+
+##Step 4: Create training and test partitions
+```{r Creating training and test partitions, echo=TRUE}
+set.seed(100)
+
+split <- sample.split(Lattes$LatteDonut, SplitRatio = 0.8)
+
+train_data <- subset(Lattes, split == TRUE)
+test_data  <- subset(Lattes, split == FALSE)
+
+nrow(train_data)   #should be 440
+nrow(test_data)    #should be 110
+```
+##Step 5: Create logistics regression model
+```{r Logistics regression Model, echo=TRUE}
+logre_model <- glm( #Calls generalized linear model
+  LatteDonut ~ Age + EstMonthsCustomer + EstSalary, #prediction formula
+  data = train_data, #Use training data
+  family = binomial #Specifies a binary result
+)
+```
+
+##Step 6: Training model summary info
+```{r Training model summary, echo=TRUE}
+summary(logre_model)
+
+coef(logre_model) #Coefficients
+
+exp(coef(logre_model)) #Odds ratios
+
+NagelkerkeR2(logre_model) #Nagelkerke R-squared
+```
+## Step 7: List most important features of the model
+```{r Important model features, echo=TRUE}
+importance <- varImp(logre_model, scale = TRUE)
+importance
+plot(importance)
+```
+
+## Step 8: Validate model with test data
+```{r Validation, echo=TRUE}
+#Make actual outcome a factor with levels 0 and 1
+test_data$LatteDonut <- factor(test_data$LatteDonut, levels = c(0, 1))
+
+#Predict probabilities
+pred_prob <- predict(logre_model, newdata = test_data, type = "response")
+
+#Convert probabilities to class predictions using 0.5 cutoff
+pred_class <- ifelse(pred_prob > 0.5, "1", "0")
+pred_class <- factor(pred_class, levels = c("0", "1"))
+```
+
+##Step 9: Model results using caret
+```{r Model results, echo=TRUE}
+
+#Make sure actual outcome is a factor
+test_data$LatteDonut <- factor(test_data$LatteDonut, levels = c(0, 1))
+
+#Predict probabilities
+pred_prob <- predict(logre_model, newdata = test_data, type = "response")
+
+#Convert probabilities to classes
+pred_class <- ifelse(pred_prob > 0.5, 1, 0)
+pred_class <- factor(pred_class, levels = c(0, 1))
+
+#Check lengths
+length(pred_class)
+length(test_data$LatteDonut)
+
+#Confusion matrix
+confusionMatrix(
+  data = pred_class,
+  reference = test_data$LatteDonut,
+  positive = "1",
+  mode = "prec_recall"
+)
+```
+
+##Step 10: Metrics and confusion matrix using metrica
+```{r Confusion matrix, echo=TRUE}
+#Build a dataframe with named columns
+results_df <- data.frame(
+  obs = factor(test_data$LatteDonut, levels = c("0", "1")),
+  pred = factor(pred_class, levels = c("0", "1"))
+)
+
+#Comprehensive metrics
+metrics_summary(
+  data = results_df,
+  obs = obs,
+  pred = pred,
+  type = "classification"
+)
+
+#Confusion matrix
+confusion_matrix(
+  obs = results_df$obs,
+  pred = results_df$pred
+)
+```
+
+##Step 11: Predict latte donut for new data
+```{r Predict for new data, echo=TRUE}
+
+#Import new data
+LattesNEW <- read_excel("Lattes1.xlsx", sheet = "NewData")
+
+#Predict probabilities
+LattesNEW$LR_prob <- predict(logre_model, newdata = LattesNEW, type = "response")
+
+#Predict class
+LattesNEW$LR_pred <- ifelse(LattesNEW$LR_prob > 0.5, 1, 0)
+
+#Reorder columns
+LattesNEW <- LattesNEW[, c("Record", "Age", "EstMonthsCustomer", "EstSalary", "LR_prob", "LR_pred")]
+
+print(LattesNEW)
+```
+
+##Step 12: Conclusion
+The logistic regression model created in this analysis works very well for predicting whether a customer will buy a coffee and a doughnut simultaneously. Based on the results, Age and EstSalary are important variables because they are statistically significant, while EstMonthsCustomer is not significant. This means that how long someone has been a customer does not strongly affect the prediction, and it could possibly be removed from the model. However, it may still be useful to keep for general understanding of customer behavior.
+
+The signs of the coefficients also make sense. All of the variables have positive relationships with the outcome, which means that as Age, salary, and months as a customer increase, the likelihood of purchasing both items also increases. This is logical because people with higher incomes may spend more money, and customers who have been around longer may be more loyal.
+
+The odds ratios help explain the impact of each variable. For example, increasing Age slightly increases the chances of purchasing, and each additional month as a customer also increases the likelihood. Salary has a small effect per dollar, but since salaries are large numbers, it still plays an important role overall. Based on the importance ranking, EstSalary is the most important variable, followed by Age, and then EstMonthsCustomer.
+
+The model performs extremely well when tested. The confusion matrix shows very few errors, with only 3 incorrect predictions out of 110 test cases. The overall accuracy is about 97%, which is very high. The model also has perfect precision, meaning every time it predicts a customer will purchase, it is correct. The recall is also high, showing that it correctly identifies most customers who do purchase.
+
+The evaluation metrics from the metrica package confirm these results, with high accuracy, strong F1-score, and perfect specificity. These results show that the model is both accurate and reliable.
+
+When predicting new data, customers with higher salaries, moderate to higher age, and longer time as customers are more likely to be predicted as buyers. Overall, this model is very effective and can be used confidently to predict customer purchasing behavior and help guide business decisions.
